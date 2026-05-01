@@ -29,10 +29,12 @@ jobs:
         run: docker build --pull --tag devsecops-secure-pipeline:ci .
 
       - name: Scan Docker image with Trivy
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: devsecops-secure-pipeline:ci
-          format: table
-          severity: CRITICAL,HIGH
-          exit-code: "1"
-          ignore-unfixed: true
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy:latest \
+            image \
+            --severity CRITICAL,HIGH \
+            --exit-code 1 \
+            --ignore-unfixed \
+            devsecops-secure-pipeline:ci
