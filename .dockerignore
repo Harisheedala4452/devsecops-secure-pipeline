@@ -1,0 +1,16 @@
+.git
+.github
+.pytest_cache
+__pycache__
+*.pyc
+.venv
+venv
+tests
+terraform
+docs
+README.md
+SECURITY.md
+.env
+.env.*
+!.env.example
+.DS_Store

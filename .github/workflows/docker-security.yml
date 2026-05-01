@@ -1,0 +1,38 @@
+name: Docker Security
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: docker-security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docker-build-and-scan:
+    name: Build image and scan with Trivy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build --pull --tag devsecops-secure-pipeline:ci .
+
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: devsecops-secure-pipeline:ci
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true
